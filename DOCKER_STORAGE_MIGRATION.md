@@ -1,6 +1,6 @@
-# Move Docker storage to new HD (192.168.0.39)
+# Move Docker storage to new HD
 
-Run these on the Pi after SSH: `ssh mat@192.168.0.39`. Replace `/dev/sda1` with your new disk partition if different.
+Run these on the Pi after SSH: `ssh <pi-user>@<pi-host>`. Replace `/dev/sda1` with your new disk partition if different.
 
 ## 1. Find the new disk
 

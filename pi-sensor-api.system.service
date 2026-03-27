@@ -4,12 +4,11 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=/home/mat/pi-sensor-api.bak
+ExecStart=/usr/local/bin/pi-sensor-api
 Restart=on-failure
 RestartSec=5
-Environment=GPIO_PIN=4
-Environment=PORT=8777
-WorkingDirectory=/home/mat
+EnvironmentFile=/etc/pi-sensor-api.env
+WorkingDirectory=/opt/pi-sensor-api
 
 [Install]
 WantedBy=multi-user.target

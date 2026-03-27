@@ -1,26 +1,26 @@
 # pi-sensor-api Service Setup (Auto-Start)
 
-The **pi-sensor-api is not currently configured as a systemd service** on the sensor host (e.g. `mat@192.168.0.39`). It must be started manually. This guide explains how to set it up to start automatically on boot.
+The **pi-sensor-api is not currently configured as a systemd service** on the sensor host. It must be started manually. This guide explains how to set it up to start automatically on boot.
 
 ## Prerequisites
 
-- The `pi-sensor-api` binary is on the host (e.g. at `/home/mat/pi-sensor-api`)
+- The `pi-sensor-api` binary is on the host (e.g. at `/usr/local/bin/pi-sensor-api`)
 - You have `sudo` on the host to install and enable a systemd service
 
 ## 1. Ensure `pi-sensor.service` Matches Your Deployment
 
 The `pi-sensor.service` file in this directory is set up for:
 
-- **User/Group:** `mat`
-- **Binary:** `/home/mat/pi-sensor-api`
-- **WorkingDirectory:** `/home/mat`
+- **Binary:** `/usr/local/bin/pi-sensor-api`
+- **WorkingDirectory:** `/opt/pi-sensor-api`
+- **Environment file:** `/etc/pi-sensor-api.env`
 - **Environment:** `GPIO_PIN=4`, `PORT=8777`
 
-If your binary or user is different, edit `pi-sensor.service` and change:
+If your paths are different, edit `pi-sensor.service` and change:
 
 - `ExecStart` – full path to the `pi-sensor-api` binary  
-- `WorkingDirectory` – directory to run from (e.g. home dir)  
-- `User` and `Group` – user that should run the service  
+- `WorkingDirectory` – directory to run from  
+- `EnvironmentFile` – path to env config file  
 
 ## 2. Install and Enable the Service
 
@@ -46,8 +46,8 @@ sudo systemctl start pi-sensor.service
 # Check status
 sudo systemctl status pi-sensor.service
 
-# Test the API (replace host if different)
-curl http://192.168.0.39:8777/sensor
+# Test the API
+curl http://<pi-host>:8777/sensor
 ```
 
 ## Useful Commands
