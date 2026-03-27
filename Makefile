@@ -9,13 +9,15 @@ WORKDIR := /opt/pi-sensor-api
 INSTALL_USER ?= $(shell id -un)
 INSTALL_GROUP ?= $(shell id -gn)
 
-.PHONY: help env build install install-bin install-env install-service enable-service restart status logs docker-up docker-down
+.PHONY: help env build install install-bin install-env install-service enable-service restart status logs docker-up docker-down deb deb-install
 
 help:
 	@printf "%s\n" \
 	"make env           # create .env from .env.skeleton if missing" \
 	"make build         # build release binary" \
 	"make install       # build + install binary + install systemd service" \
+	"make deb           # build .deb package (requires cargo-deb)" \
+	"make deb-install   # build and install .deb with apt" \
 	"make restart       # restart systemd service" \
 	"make status        # service status" \
 	"make logs          # follow service logs" \
@@ -65,3 +67,9 @@ docker-up: env
 
 docker-down:
 	docker compose down
+
+deb:
+	cargo deb
+
+deb-install: deb
+	sudo apt install -y ./target/debian/pi-sensor-api_*.deb

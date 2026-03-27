@@ -2,6 +2,8 @@
 name = "pi-sensor-api"
 version = "0.1.0"
 edition = "2021"
+description = "Raspberry Pi DHT11 sensor HTTP API service"
+license = "MIT"
 
 [dependencies]
 rppal = "0.22"
@@ -11,3 +13,17 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 anyhow = "1.0"
 dotenvy = "0.15"
+
+[package.metadata.deb]
+maintainer = "Pi Sensor API Maintainers"
+copyright = "2026, Pi Sensor API Maintainers"
+depends = "$auto, systemd"
+section = "utils"
+priority = "optional"
+maintainer-scripts = "debian/"
+assets = [
+    ["target/release/pi-sensor-api", "usr/bin/pi-sensor-api", "755"],
+    ["pi-sensor.service", "lib/systemd/system/pi-sensor.service", "644"],
+    [".env.skeleton", "usr/share/doc/pi-sensor-api/pi-sensor-api.env.skeleton", "644"],
+    ["README.md", "usr/share/doc/pi-sensor-api/README.md", "644"],
+]

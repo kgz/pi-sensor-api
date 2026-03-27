@@ -1,0 +1,17 @@
+#!/bin/sh
+set -e
+
+ENV_TARGET="/etc/pi-sensor-api.env"
+SKELETON="/usr/share/doc/pi-sensor-api/pi-sensor-api.env.skeleton"
+
+if [ ! -f "$ENV_TARGET" ] && [ -f "$SKELETON" ]; then
+    install -m 0644 "$SKELETON" "$ENV_TARGET"
+fi
+
+systemctl daemon-reload || true
+
+if [ "$1" = "configure" ]; then
+    systemctl enable --now pi-sensor.service || true
+fi
+
+exit 0

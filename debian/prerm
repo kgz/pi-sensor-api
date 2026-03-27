@@ -1,0 +1,8 @@
+#!/bin/sh
+set -e
+
+if [ "$1" = "remove" ]; then
+    systemctl --no-reload disable --now pi-sensor.service || true
+fi
+
+exit 0

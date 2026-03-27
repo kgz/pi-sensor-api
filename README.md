@@ -19,6 +19,33 @@ make install
 - renders and installs systemd unit from `pi-sensor.service.template`
 - runs `systemctl daemon-reload` and enables/starts `pi-sensor.service`
 
+## Build an APT package (.deb)
+
+Install cargo-deb once:
+
+```bash
+cargo install cargo-deb
+```
+
+Build package:
+
+```bash
+make deb
+```
+
+Install locally with apt:
+
+```bash
+make deb-install
+```
+
+Package install behavior:
+
+- installs binary to `/usr/bin/pi-sensor-api`
+- installs systemd unit to `/lib/systemd/system/pi-sensor.service`
+- creates `/etc/pi-sensor-api.env` from skeleton on first install
+- reloads systemd and enables/starts `pi-sensor.service`
+
 ## Configuration
 
 The app loads `.env` automatically when running from the repo, and reads:
