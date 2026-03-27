@@ -1,0 +1,15 @@
+[Unit]
+Description=Pi DHT11 Sensor API
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/home/mat/pi-sensor-api.bak
+Restart=on-failure
+RestartSec=5
+Environment=GPIO_PIN=4
+Environment=PORT=8777
+WorkingDirectory=/home/mat
+
+[Install]
+WantedBy=default.target

@@ -1,0 +1,14 @@
+# Use with pre-built image (docker load). No build step.
+services:
+  pi-sensor-api:
+    image: pi-sensor-api
+    restart: unless-stopped
+    privileged: true
+    init: true
+    env_file:
+      - .env
+    ports:
+      - "${PORT:-8777}:8777"
+    environment:
+      - GPIO_PIN=${GPIO_PIN:-4}
+      - PORT=${PORT:-8777}

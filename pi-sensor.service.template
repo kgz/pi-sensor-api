@@ -1,0 +1,16 @@
+[Unit]
+Description=Pi DHT11 Sensor API
+After=network.target
+
+[Service]
+Type=simple
+User={{USER}}
+Group={{GROUP}}
+ExecStart=/usr/local/bin/pi-sensor-api
+WorkingDirectory={{WORKDIR}}
+EnvironmentFile={{ENV_FILE}}
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

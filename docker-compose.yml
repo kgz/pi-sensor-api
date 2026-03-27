@@ -1,0 +1,12 @@
+services:
+  pi-sensor-api:
+    build: .
+    restart: unless-stopped
+    privileged: true   # required for GPIO /dev/gpiomem access
+    env_file:
+      - .env
+    ports:
+      - "${PORT:-8777}:8777"
+    environment:
+      - GPIO_PIN=${GPIO_PIN:-4}
+      - PORT=${PORT:-8777}

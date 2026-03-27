@@ -1,0 +1,10 @@
+target/
+.git/
+.gitignore
+.env
+.env.*
+*.md
+DEPLOY.md
+SERVICE_SETUP.md
+PIN_CONNECTIONS.md
+pi-sensor.service
