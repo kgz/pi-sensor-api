@@ -32,9 +32,9 @@ impl DhtBus {
 
             handle.set_value(0).context("Failed to drive GPIO low")?;
             std::thread::sleep(Duration::from_millis(start_low_ms));
-            handle.set_value(1).context("Failed to drive GPIO high")?;
-            std::thread::sleep(Duration::from_micros(30));
         }
+        // Release the line and let the pull-up resistor bring it HIGH.
+        std::thread::sleep(Duration::from_micros(30));
 
         let line = chip
             .get_line(u32::from(self.gpio_pin))
