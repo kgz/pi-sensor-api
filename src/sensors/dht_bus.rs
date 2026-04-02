@@ -5,7 +5,6 @@ use std::thread;
 use std::time::{Duration, Instant};
 
 const READ_TIMEOUT_MS: u64 = 250;
-const BIT_ONE_THRESHOLD_US: u64 = 40;
 
 pub struct DhtBus {
     gpio: Gpio,
@@ -19,7 +18,7 @@ impl DhtBus {
         Ok(Self { gpio, gpio_pin })
     }
 
-    pub fn read_frame(&mut self) -> Result<[u8; 5]> {
+    pub fn read_frame(&mut self, start_low_ms: u64, bit_one_threshold_us: u64) -> Result<[u8; 5]> {
         let mut data = [0u8; 5];
 
         let mut pin = self
@@ -29,7 +28,7 @@ impl DhtBus {
             .into_output();
 
         pin.set_low();
-        thread::sleep(Duration::from_millis(18));
+        thread::sleep(Duration::from_millis(start_low_ms));
         pin.set_high();
         thread::sleep(Duration::from_micros(30));
         drop(pin);
@@ -62,12 +61,8 @@ impl DhtBus {
                 let high_duration_us = measure_high_duration_us(&pin)?;
 
                 *byte <<= 1;
-                if high_duration_us >= BIT_ONE_THRESHOLD_US {
+                if high_duration_us >= bit_one_threshold_us {
                     *byte |= 1;
-                }
-
-                if !wait_for_level(&pin, Level::Low, READ_TIMEOUT_MS)? {
-                    anyhow::bail!("Timeout reading bit (LOW)");
                 }
             }
         }

@@ -47,7 +47,10 @@ async fn read_sensor_with_retry(state: &AppState) -> Result<sensors::Reading> {
     let mut last_error = None;
 
     for attempt in 1..=MAX_RETRIES {
-        match bus.read_frame().and_then(|frame| state.sensor.decode(frame)) {
+        match bus
+            .read_frame(state.sensor.start_low_ms(), state.sensor.bit_one_threshold_us())
+            .and_then(|frame| state.sensor.decode(frame))
+        {
             Ok(result) => return Ok(result),
             Err(e) => {
                 last_error = Some(e);

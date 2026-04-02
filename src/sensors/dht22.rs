@@ -8,6 +8,14 @@ impl SensorModule for Dht22 {
         "dht22"
     }
 
+    fn start_low_ms(&self) -> u64 {
+        2
+    }
+
+    fn bit_one_threshold_us(&self) -> u64 {
+        50
+    }
+
     fn decode(&self, data: [u8; 5]) -> Result<Reading> {
         let humidity_raw = (u16::from(data[0]) << 8) | u16::from(data[1]);
         let humidity_percent = f32::from(humidity_raw) / 10.0;

@@ -14,6 +14,8 @@ pub struct Reading {
 
 pub trait SensorModule: Send + Sync {
     fn name(&self) -> &'static str;
+    fn start_low_ms(&self) -> u64;
+    fn bit_one_threshold_us(&self) -> u64;
     fn decode(&self, data: [u8; 5]) -> Result<Reading>;
 }
 
