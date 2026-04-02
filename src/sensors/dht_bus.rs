@@ -104,6 +104,17 @@ impl DhtBus {
             data[byte_idx] <<= 1;
             data[byte_idx] |= if data_highs[i] >= bit_one_threshold_us { 1 } else { 0 };
         }
+        if std::env::var("DEBUG_DHT").ok().as_deref() == Some("1") {
+            eprintln!(
+                "dht debug: chip={} line={} start_low_ms={} threshold_us={} highs_us={:?} data={:02x?}",
+                self.gpio_chip,
+                self.gpio_pin,
+                start_low_ms,
+                bit_one_threshold_us,
+                highs_us,
+                data
+            );
+        }
 
         let checksum = data[0]
             .wrapping_add(data[1])
