@@ -48,15 +48,14 @@ impl DhtBus {
             )
             .context("Failed to request GPIO events")?;
 
-        let mut bits: [u8; 40] = [0; 40];
-        let mut bit_idx: usize = 0;
+        let mut highs_us: Vec<u64> = Vec::with_capacity(41);
 
         // We measure HIGH pulse width per bit: rising edge -> falling edge.
         // First we need to sync past the sensor's response pulses.
         let deadline = Instant::now() + Duration::from_millis(READ_TIMEOUT_MS);
         let mut last_rise_ns: Option<u64> = None;
 
-        while bit_idx < 40 {
+        while highs_us.len() < 41 {
             let now = Instant::now();
             if now >= deadline {
                 anyhow::bail!("Timeout waiting for sensor edge events");
@@ -81,11 +80,8 @@ impl DhtBus {
                         let fall_ns = evt.timestamp();
                         if fall_ns > rise_ns {
                             let high_us = (fall_ns - rise_ns) / 1_000;
-                            // Skip early short/long pulses until we are in a plausible bit stream.
-                            // Valid bit highs are ~26-28us or ~70us.
                             if high_us >= 10 && high_us <= 120 {
-                                bits[bit_idx] = if high_us >= bit_one_threshold_us { 1 } else { 0 };
-                                bit_idx += 1;
+                                highs_us.push(high_us);
                             }
                         }
                     }
@@ -94,11 +90,19 @@ impl DhtBus {
             }
         }
 
+        // First HIGH pulse is the sensor's 80us response HIGH; the remaining 40 are data bits.
+        let data_highs = highs_us
+            .get(1..)
+            .ok_or_else(|| anyhow::anyhow!("Missing data pulses"))?;
+        if data_highs.len() != 40 {
+            anyhow::bail!("Expected 40 data pulses, got {}", data_highs.len());
+        }
+
         let mut data = [0u8; 5];
         for i in 0..40 {
             let byte_idx = i / 8;
             data[byte_idx] <<= 1;
-            data[byte_idx] |= bits[i];
+            data[byte_idx] |= if data_highs[i] >= bit_one_threshold_us { 1 } else { 0 };
         }
 
         let checksum = data[0]
